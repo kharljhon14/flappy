@@ -11,5 +11,9 @@ impl GameState for State {
 }
 
 fn main() -> BError {
-    println!("Hello, world!");
+    let context = BTermBuilder::simple80x50()
+        .with_title("Flappy Dragon")
+        .build()?;
+
+    main_loop(context, State {})
 }

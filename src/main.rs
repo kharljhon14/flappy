@@ -2,7 +2,7 @@ use bracket_lib::prelude::*;
 
 const SCREEN_WIDTH: i32 = 80;
 const SCREEN_HEIGHT: i32 = 50;
-const FRAME_DURATION: f32 = 75.0;
+const FRAME_DURATION: f32 = 30.0;
 
 // Game State
 struct State {
@@ -48,7 +48,9 @@ impl State {
             self.obstacle = Obstacle::new(self.player.x + SCREEN_WIDTH, self.score);
         }
 
-        if self.player.y > SCREEN_HEIGHT || self.player.y <= 0 {
+        if (self.player.y > SCREEN_HEIGHT || self.player.y <= 0)
+            || self.obstacle.hit_obstacle(&self.player)
+        {
             self.mode = GameMode::End;
         }
     }
@@ -132,7 +134,7 @@ impl Player {
     fn gravity_and_move(&mut self) {
         // Check for terminal velocity only on downward momentum
         if self.velocity < 2.0 {
-            self.velocity += 0.2;
+            self.velocity += 0.4;
         }
 
         self.y += self.velocity as i32;
@@ -145,7 +147,7 @@ impl Player {
 
     fn flap(&mut self) {
         // It's a negative number so this will move the character upwards
-        self.velocity = -2.0;
+        self.velocity = -3.0;
     }
 }
 
@@ -194,6 +196,7 @@ impl Obstacle {
 fn main() -> BError {
     let context = BTermBuilder::simple80x50()
         .with_title("Flappy Dragon")
+        .with_fancy_console(80, 50, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())
